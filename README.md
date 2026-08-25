@@ -1,97 +1,73 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Gutenberg Project
 
-# Getting Started
+A React Native mobile app for browsing Project Gutenberg books through the hosted [Gutendex](https://gutendex.careers.ignitesol.com) API. Users pick a genre, infinitely scroll matching books (covers only), search by title or author, and open the best available HTML, PDF, or TXT version in the system browser.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Setup and run
 
-## Step 1: Start Metro
+### Prerequisites
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
+- Node.js 22.11 or newer
+- JDK 17
+- Android Studio with Android SDK, NDK `27.1.12297006`, CMake, and an emulator or device
 
 ```sh
-# Using npm
+npm install
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+In a second terminal:
 
 ```sh
-# Using npm
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+On Windows, if the username contains a space, keep the existing CMake linker flag in `android/app/build.gradle`. Native libraries such as `react-native-screens` can fail to link (`CLANG_~1.EXE`); this project uses a small JS navigator to avoid that toolchain bug.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+## Architecture overview
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
+```
+src/
+  api/           Gutendex HTTP client and types
+  components/    Genre, book, search, and empty/error UI
+  config/        API base URL and query defaults
+  constants/     Genre catalog
+  hooks/         Debounced fetch + pagination
+  i18n/          English strings (swap `en.ts` to add a locale)
+  navigation/    Home ↔ Books stack
+  screens/       Home and Books screens
+  theme/         Colors and Montserrat typography
+  utils/         Viewable format selection (skip `.zip`)
 ```
 
-Then, and every time you update your native dependencies, run:
+- Theme tokens live in `src/theme` so a second palette can be introduced without touching screens.
+- Copy lives in `src/i18n/en.ts`. Export a different dictionary from `src/i18n/index.ts` to add a language.
+- Books are requested with `mime_type=image` so results include covers, `topic` for the selected genre (subjects and bookshelves), and `search` for title/author.
+- Pagination follows the API `next` URL. Search is debounced and re-queries from page one while keeping the genre filter.
+- Tapping a book opens HTML, then PDF, then TXT. Zip URLs are treated as non-viewable.
 
-```sh
-bundle exec pod install
-```
+## Third-party libraries
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+| Library | Why |
+| --- | --- |
+| `react-native-safe-area-context` | Safe area insets on notched devices |
+| Montserrat (bundled TTF) | Spec typography |
 
-```sh
-# Using npm
-npm run ios
+React Navigation native-stack was not used because `react-native-screens` failed to compile on this Windows NDK path.
 
-# OR using Yarn
-yarn ios
-```
+## AI tools used
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+Cursor (Grok 4.6) helped scaffold screens, the API client, and Git commits. Code was checked with `tsc`, Android Gradle installs, and format-selection unit tests.
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+## Assumptions and known limitations
 
-## Step 3: Modify your app
+- Genre topics are the design labels (`fiction`, `drama`, and so on) sent as Gutendex `topic` values.
+- Cover images use `image/jpeg` (or another `image/*` format) from the book `formats` map.
+- Demo video is not recorded in this repository yet; add a portrait and landscape capture to this README when available.
+- iOS is configured for landscape and portrait but was not run in this environment (Android emulator only).
 
-Now that you have successfully run the app, let's make changes!
+## Demo video
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+Portrait and landscape recordings should be linked here after capture:
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- Portrait: _add URL_
+- Landscape: _add URL_
