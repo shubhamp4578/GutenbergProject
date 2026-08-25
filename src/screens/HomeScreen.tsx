@@ -24,6 +24,8 @@ export function HomeScreen() {
         },
       ]}>
       <Text style={[styles.title, {fontSize: titleSize, lineHeight: titleSize + 4}]}>
+        {t.appName}
+      </Text>
       <Text style={styles.subtitle}>{t.appDescription}</Text>
       <View style={[styles.list, isWide && styles.listWide]}>
         {genres.map(genre => (
