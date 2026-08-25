@@ -20,7 +20,7 @@ import {SearchBox} from '../components/SearchBox';
 import {useBooks} from '../hooks/useBooks';
 import {t} from '../i18n';
 import {useNavigation, useRoute} from '../navigation/context';
-import {colors, typography} from '../theme';
+import {useTheme} from '../theme';
 import {pickViewableBookUrl} from '../utils/bookFormats';
 
 function columnCount(width: number, height: number): number {
@@ -42,6 +42,7 @@ export function BooksScreen() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const {width, height} = useWindowDimensions();
+  const {colors, typography} = useTheme();
   const [search, setSearch] = useState('');
   const topic = route.name === 'Books' ? route.params.topic : '';
   const genreLabel = route.name === 'Books' ? route.params.genreLabel : '';
@@ -93,13 +94,14 @@ export function BooksScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.screen}
+      style={[styles.screen, {backgroundColor: colors.background}]}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={0}>
       <View
         style={[
           styles.header,
           {
+            backgroundColor: colors.background,
             paddingTop: insets.top + (landscape ? 4 : 12),
             paddingBottom: landscape ? 8 : 12,
             paddingHorizontal: landscape ? 20 : 16,
@@ -109,7 +111,11 @@ export function BooksScreen() {
         <View style={styles.titleRow}>
           <BackButton onPress={navigation.goBack} />
           <Text
-            style={[styles.headerTitle, landscape && styles.headerTitleLandscape]}
+            style={[
+              typography.heading2,
+              styles.headerTitle,
+              landscape && styles.headerTitleLandscape,
+            ]}
             numberOfLines={1}>
             {genreLabel}
           </Text>
@@ -166,21 +172,18 @@ export function BooksScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.white,
   },
   header: {
     paddingBottom: 12,
     gap: 12,
-    backgroundColor: colors.white,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    minHeight: 36,
+    gap: 8,
+    minHeight: 40,
   },
   headerTitle: {
-    ...typography.heading2,
     flexShrink: 1,
     includeFontPadding: false,
   },
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
   },
   cell: {
-    padding: 6,
+    padding: 8,
   },
   footerSpinner: {
     marginVertical: 16,

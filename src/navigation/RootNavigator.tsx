@@ -2,7 +2,7 @@ import React, {useMemo, useState} from 'react';
 import {View} from 'react-native';
 import {BooksScreen} from '../screens/BooksScreen';
 import {HomeScreen} from '../screens/HomeScreen';
-import {colors} from '../theme';
+import {useTheme} from '../theme';
 import {
   NavigationContext,
   RouteContext,
@@ -13,6 +13,7 @@ import {
 import type {RootStackParamList} from './types';
 
 export function RootNavigator() {
+  const {colors} = useTheme();
   const [stack, setStack] = useState<Route[]>([{name: 'Home', params: undefined}]);
   const current = stack[stack.length - 1];
 
@@ -42,7 +43,7 @@ export function RootNavigator() {
   return (
     <NavigationContext.Provider value={navigation}>
       <RouteContext.Provider value={current}>
-        <View style={{flex: 1, backgroundColor: colors.secondaryBackground}}>
+        <View style={{flex: 1, backgroundColor: colors.background}}>
           {current.name === 'Home' ? <HomeScreen /> : <BooksScreen />}
         </View>
       </RouteContext.Provider>

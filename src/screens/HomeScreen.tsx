@@ -4,30 +4,38 @@ import {GenreCard} from '../components/GenreCard';
 import {genres} from '../constants/genres';
 import {t} from '../i18n';
 import {useNavigation} from '../navigation/context';
-import {colors, typography} from '../theme';
+import {useTheme} from '../theme';
 
 export function HomeScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
+  const {colors, typography} = useTheme();
   const isWide = width >= 700;
-  const titleSize = width < 360 ? 36 : 48;
+  const titleSize = width < 380 ? 28 : width < 420 ? 32 : 36;
 
   return (
     <ScrollView
-      style={styles.screen}
+      style={[styles.screen, {backgroundColor: colors.background}]}
       contentContainerStyle={[
         styles.content,
         {
-          paddingTop: insets.top + 16,
+          paddingTop: insets.top + 20,
           paddingBottom: insets.bottom + 32,
           flexGrow: 1,
         },
       ]}>
-      <Text style={[styles.title, {fontSize: titleSize, lineHeight: titleSize + 4}]}>
+      <Text
+        style={[
+          styles.title,
+          typography.heading1,
+          {fontSize: titleSize, lineHeight: titleSize + 6},
+        ]}>
         {t.appName}
       </Text>
-      <Text style={styles.subtitle}>{t.appDescription}</Text>
+      <Text style={[styles.subtitle, typography.body, {color: colors.textMuted}]}>
+        {t.appDescription}
+      </Text>
       <View style={[styles.list, isWide && styles.listWide]}>
         {genres.map(genre => (
           <View
@@ -54,24 +62,20 @@ export function HomeScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colors.secondaryBackground,
   },
   content: {
     paddingHorizontal: 20,
   },
   title: {
-    ...typography.heading1,
-    lineHeight: 52,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    ...typography.body,
-    color: colors.greyDark,
-    marginTop: 12,
+    marginTop: 10,
     marginBottom: 28,
     lineHeight: 24,
   },
   list: {
-    gap: 12,
+    gap: 14,
   },
   listWide: {
     flexDirection: 'row',

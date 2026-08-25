@@ -1,5 +1,5 @@
 import {Pressable, StyleSheet, Text, View} from 'react-native';
-import {colors, typography} from '../theme';
+import {useTheme} from '../theme';
 
 type GenreCardProps = {
   icon: string;
@@ -8,60 +8,85 @@ type GenreCardProps = {
 };
 
 export function GenreCard({icon, label, onPress}: GenreCardProps) {
+  const {colors, typography} = useTheme();
+
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       onPress={onPress}
-      style={({pressed}) => [styles.card, pressed && styles.pressed]}>
+      style={({pressed}) => [
+        styles.card,
+        {
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
+          shadowColor: colors.shadow,
+          transform: [{scale: pressed ? 0.985 : 1}],
+        },
+        pressed && {opacity: 0.92},
+      ]}>
       <View style={styles.left}>
-        <Text style={styles.icon}>{icon}</Text>
-        <Text style={styles.label}>{label.toUpperCase()}</Text>
+        <View style={[styles.iconWrap, {backgroundColor: colors.primarySoft}]}>
+          <Text style={styles.icon}>{icon}</Text>
+        </View>
+        <Text style={[typography.genreCard, styles.label]}>{label}</Text>
       </View>
-      <View style={styles.chevron} />
+      <View style={[styles.chevronWrap, {backgroundColor: colors.primarySoft}]}>
+        <View style={[styles.chevron, {borderColor: colors.primary}]} />
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    height: 50,
-    borderRadius: 4,
-    backgroundColor: colors.white,
-    paddingHorizontal: 10,
+    minHeight: 72,
+    borderRadius: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    shadowColor: '#D3D1EE',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 3,
-  },
-  pressed: {
-    opacity: 0.85,
+    borderWidth: 1,
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 1,
+    shadowRadius: 16,
+    elevation: 4,
   },
   left: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
     flexShrink: 1,
+  },
+  iconWrap: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   icon: {
     fontSize: 22,
   },
   label: {
-    ...typography.genreCard,
-    letterSpacing: 0.5,
+    letterSpacing: 0.2,
     includeFontPadding: false,
+    textTransform: 'capitalize',
+  },
+  chevronWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   chevron: {
-    width: 10,
-    height: 10,
-    borderRightWidth: 2.5,
-    borderTopWidth: 2.5,
-    borderColor: colors.primary,
+    width: 9,
+    height: 9,
+    borderRightWidth: 2.2,
+    borderTopWidth: 2.2,
     transform: [{rotate: '45deg'}],
-    marginRight: 4,
+    marginLeft: -2,
   },
 });

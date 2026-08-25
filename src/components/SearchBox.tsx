@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Pressable, StyleSheet, Text, TextInput, View} from 'react-native';
 import {t} from '../i18n';
-import {colors, typography} from '../theme';
+import {useTheme} from '../theme';
 
 type SearchBoxProps = {
   value: string;
@@ -10,16 +10,24 @@ type SearchBoxProps = {
 
 export function SearchBox({value, onChangeText}: SearchBoxProps) {
   const [focused, setFocused] = useState(false);
+  const {colors, typography} = useTheme();
 
   return (
-    <View style={[styles.row, focused && styles.focused]}>
-      <Text style={styles.icon}>⌕</Text>
+    <View
+      style={[
+        styles.row,
+        {
+          backgroundColor: focused ? colors.searchFocused : colors.searchBackground,
+          borderColor: focused ? colors.primary : colors.border,
+        },
+      ]}>
+      <Text style={[styles.icon, {color: colors.textMuted}]}>⌕</Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
         placeholder={t.searchPlaceholder}
-        placeholderTextColor={colors.grey}
-        style={styles.input}
+        placeholderTextColor={colors.textMuted}
+        style={[styles.input, typography.searchBox, {color: colors.text}]}
         autoCorrect={false}
         autoCapitalize="none"
         returnKeyType="search"
@@ -36,7 +44,7 @@ export function SearchBox({value, onChangeText}: SearchBoxProps) {
           onPress={() => onChangeText('')}
           hitSlop={8}
           style={styles.clearHit}>
-          <Text style={styles.clear}>×</Text>
+          <Text style={[styles.clear, {color: colors.textMuted}]}>×</Text>
         </Pressable>
       ) : null}
     </View>
@@ -45,30 +53,21 @@ export function SearchBox({value, onChangeText}: SearchBoxProps) {
 
 const styles = StyleSheet.create({
   row: {
-    height: 40,
-    borderRadius: 4,
-    backgroundColor: colors.greyLight,
-    paddingHorizontal: 10,
+    height: 48,
+    borderRadius: 14,
+    paddingHorizontal: 14,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: 'transparent',
-  },
-  focused: {
-    borderColor: colors.primary,
-    backgroundColor: colors.white,
   },
   icon: {
     fontSize: 16,
-    color: colors.grey,
     marginRight: 8,
   },
   input: {
-    ...typography.searchBox,
     flex: 1,
     paddingVertical: 0,
     paddingHorizontal: 0,
-    color: colors.greyDark,
     includeFontPadding: false,
   },
   clearHit: {
@@ -78,6 +77,5 @@ const styles = StyleSheet.create({
   clear: {
     fontSize: 22,
     lineHeight: 24,
-    color: colors.grey,
   },
 });

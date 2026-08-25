@@ -1,5 +1,5 @@
 export const en = {
-  appName: 'Gutenberg Project',
+  appName: 'IgniteSol Assignment',
   appDescription:
     'A social cataloging website that allows you to freely search its database of books, annotations, and reviews.',
   searchPlaceholder: 'Search',

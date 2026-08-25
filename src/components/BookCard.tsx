@@ -1,6 +1,6 @@
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
 import type {Book} from '../api/types';
-import {colors, typography} from '../theme';
+import {useTheme} from '../theme';
 import {getAuthorName, getBookCoverUrl} from '../utils/bookFormats';
 
 type BookCardProps = {
@@ -9,6 +9,7 @@ type BookCardProps = {
 };
 
 export function BookCard({book, onPress}: BookCardProps) {
+  const {colors, typography} = useTheme();
   const cover = getBookCoverUrl(book);
   const author = getAuthorName(book);
 
@@ -17,17 +18,37 @@ export function BookCard({book, onPress}: BookCardProps) {
       accessibilityRole="button"
       accessibilityLabel={book.title}
       onPress={() => onPress(book)}
-      style={({pressed}) => [styles.wrap, pressed && styles.pressed]}>
-      {cover ? (
-        <Image source={{uri: cover}} style={styles.cover} />
-      ) : (
-        <View style={[styles.cover, styles.placeholder]} />
-      )}
-      <Text style={styles.title} numberOfLines={2}>
-        {book.title.toUpperCase()}
+      style={({pressed}) => [
+        styles.wrap,
+        pressed && styles.pressed,
+        {transform: [{scale: pressed ? 0.98 : 1}]},
+      ]}>
+      <View
+        style={[
+          styles.coverShell,
+          {
+            backgroundColor: colors.surfaceElevated,
+            borderColor: colors.border,
+            shadowColor: colors.shadow,
+          },
+        ]}>
+        {cover ? (
+          <Image source={{uri: cover}} style={styles.cover} />
+        ) : (
+          <View
+            style={[styles.cover, styles.placeholder, {backgroundColor: colors.searchBackground}]}
+          />
+        )}
+      </View>
+      <Text
+        style={[typography.bookName, styles.title, {color: colors.text}]}
+        numberOfLines={2}>
+        {book.title}
       </Text>
       {author ? (
-        <Text style={styles.author} numberOfLines={1}>
+        <Text
+          style={[typography.bookAuthor, styles.author, {color: colors.textMuted}]}
+          numberOfLines={1}>
           {author}
         </Text>
       ) : null}
@@ -40,28 +61,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pressed: {
-    opacity: 0.85,
+    opacity: 0.9,
+  },
+  coverShell: {
+    borderRadius: 14,
+    overflow: 'hidden',
+    borderWidth: 1,
+    shadowOffset: {width: 0, height: 10},
+    shadowOpacity: 1,
+    shadowRadius: 18,
+    elevation: 5,
   },
   cover: {
     width: '100%',
     aspectRatio: 114 / 162,
-    borderRadius: 8,
-    backgroundColor: colors.greyLight,
-    shadowColor: '#D3D1EE',
-    shadowOffset: {width: 0, height: 2},
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 3,
   },
-  placeholder: {
-    backgroundColor: colors.greyLight,
-  },
+  placeholder: {},
   title: {
-    ...typography.bookName,
-    marginTop: 8,
+    marginTop: 10,
+    lineHeight: 16,
   },
   author: {
-    ...typography.bookAuthor,
-    marginTop: 2,
+    marginTop: 3,
   },
 });
