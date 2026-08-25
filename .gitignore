@@ -76,3 +76,6 @@ yarn-error.log
 
 # Local assessment brief (keep on machine only)
 tasks/
+
+# Submission artifacts (APK stays local for email)
+submission/*.apk
