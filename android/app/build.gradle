@@ -84,6 +84,13 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        // Windows SDK paths with spaces shorten clang++.exe to CLANG_~1.EXE,
+        // so the NDK does not auto-link libc++. Force it on every native .so.
+        externalNativeBuild {
+            cmake {
+                arguments "-DCMAKE_SHARED_LINKER_FLAGS=-lc++_shared"
+            }
+        }
     }
     signingConfigs {
         debug {
