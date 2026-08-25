@@ -73,6 +73,7 @@ Cursor (Grok) helped scaffold screens, the API client, launcher icons, and Git c
 
 - Genre topics are the design labels (`fiction`, `drama`, and so on) sent as Gutendex `topic` values.
 - Cover images use `image/jpeg` (or another `image/*` format) from the book `formats` map.
+- Gutendex `next` / `previous` links sometimes point at an internal host (`gutendex-api:…`). The client rewrites those to `https://gutendex.careers.ignitesol.com` before fetching the next page.
 - Release APK is signed with the Android debug keystore for assessment delivery (not a Play Store production key).
 - iOS is configured for landscape and portrait but was primarily verified on Android emulator.
 

@@ -16,15 +16,20 @@ export function useBooks({topic, search}: UseBooksOptions) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestId = useRef(0);
+  const loadingMoreLock = useRef(false);
 
   const load = useCallback(
     async (mode: 'replace' | 'append' | 'refresh', pageUrl?: string | null) => {
       const id = ++requestId.current;
+      console.warn('[useBooks] load', mode, {topic, search, pageUrl});
       if (mode === 'replace') {
         setLoading(true);
+        loadingMoreLock.current = false;
+        setLoadingMore(false);
       } else if (mode === 'refresh') {
         setRefreshing(true);
       } else {
+        loadingMoreLock.current = true;
         setLoadingMore(true);
       }
       setError(null);
@@ -32,7 +37,7 @@ export function useBooks({topic, search}: UseBooksOptions) {
       try {
         const data = await fetchBooks({
           topic,
-          search: mode === 'append' ? search : search,
+          search,
           pageUrl: mode === 'append' ? pageUrl : undefined,
         });
         if (id !== requestId.current) {
@@ -42,19 +47,28 @@ export function useBooks({topic, search}: UseBooksOptions) {
           mode === 'append' ? [...current, ...data.results] : data.results,
         );
         setNextUrl(data.next);
-      } catch {
+        console.warn('[useBooks] success', mode, data.results.length, data.next);
+      } catch (err) {
         if (id !== requestId.current) {
           return;
         }
+        console.warn('[useBooks] error', mode, String(err));
         setError('network');
         if (mode === 'replace') {
           setBooks([]);
         }
+        // Prevent endless footer spinner retries on a bad/unreachable next URL.
+        if (mode === 'append') {
+          setNextUrl(null);
+        }
       } finally {
+        if (mode === 'append') {
+          loadingMoreLock.current = false;
+          setLoadingMore(false);
+        }
         if (id === requestId.current) {
           setLoading(false);
           setRefreshing(false);
-          setLoadingMore(false);
         }
       }
     },
@@ -69,7 +83,13 @@ export function useBooks({topic, search}: UseBooksOptions) {
   }, [load, search]);
 
   const loadMore = useCallback(() => {
-    if (!nextUrl || loading || loadingMore || refreshing) {
+    if (
+      !nextUrl ||
+      loading ||
+      loadingMore ||
+      refreshing ||
+      loadingMoreLock.current
+    ) {
       return;
     }
     load('append', nextUrl);
@@ -89,6 +109,7 @@ export function useBooks({topic, search}: UseBooksOptions) {
     refreshing,
     loadingMore,
     error,
+    nextUrl,
     loadMore,
     retry,
     refresh,

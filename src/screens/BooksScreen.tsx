@@ -55,6 +55,7 @@ export function BooksScreen() {
     refreshing,
     loadingMore,
     error,
+    nextUrl,
     loadMore,
     retry,
     refresh,
@@ -157,10 +158,20 @@ export function BooksScreen() {
           onRefresh={refresh}
           ListFooterComponent={
             loadingMore ? (
-              <ActivityIndicator
-                color={colors.primary}
-                style={styles.footerSpinner}
-              />
+              <View style={styles.footerBlock}>
+                <ActivityIndicator
+                  color={colors.primary}
+                  style={styles.footerSpinner}
+                />
+                {__DEV__ ? (
+                  <Text style={[styles.footerDebug, {color: colors.textMuted}]}>
+                    Loading more…
+                    {nextUrl ? `\n${nextUrl}` : ''}
+                  </Text>
+                ) : null}
+              </View>
+            ) : error && books.length > 0 ? (
+              <FeedbackState message={t.networkError} onRetry={retry} />
             ) : undefined
           }
         />
@@ -193,7 +204,17 @@ const styles = StyleSheet.create({
   cell: {
     padding: 8,
   },
+  footerBlock: {
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    gap: 8,
+  },
   footerSpinner: {
-    marginVertical: 16,
+    marginVertical: 4,
+  },
+  footerDebug: {
+    fontSize: 11,
+    textAlign: 'center',
   },
 });
