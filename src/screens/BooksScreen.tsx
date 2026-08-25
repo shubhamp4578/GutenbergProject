@@ -17,7 +17,7 @@ import {FeedbackState} from '../components/FeedbackState';
 import {SearchBox} from '../components/SearchBox';
 import {useBooks} from '../hooks/useBooks';
 import {t} from '../i18n';
-import {useNavigation, useRoute} from '../navigation/RootNavigator';
+import {useNavigation, useRoute} from '../navigation/context';
 import {colors, typography} from '../theme';
 import {pickViewableBookUrl} from '../utils/bookFormats';
 

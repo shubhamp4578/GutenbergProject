@@ -39,4 +39,4 @@ export const typography = {
     fontSize: 12,
     color: '#A0A0A0',
   },
-} as const;
+};

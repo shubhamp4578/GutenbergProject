@@ -1,41 +1,16 @@
-import React, {createContext, useContext, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
+import {View} from 'react-native';
 import {BooksScreen} from '../screens/BooksScreen';
 import {HomeScreen} from '../screens/HomeScreen';
+import {colors} from '../theme';
+import {
+  NavigationContext,
+  RouteContext,
+  type Navigation,
+  type Route,
+  type RouteName,
+} from './context';
 import type {RootStackParamList} from './types';
-
-export type RouteName = keyof RootStackParamList;
-
-export type Route =
-  | {name: 'Home'; params: undefined}
-  | {name: 'Books'; params: RootStackParamList['Books']};
-
-type Navigation = {
-  navigate: {
-    (name: 'Home'): void;
-    (name: 'Books', params: RootStackParamList['Books']): void;
-  };
-  goBack: () => void;
-  canGoBack: () => boolean;
-};
-
-const NavigationContext = createContext<Navigation | null>(null);
-const RouteContext = createContext<Route | null>(null);
-
-export function useNavigation(): Navigation {
-  const value = useContext(NavigationContext);
-  if (!value) {
-    throw new Error('useNavigation must be used inside RootNavigator');
-  }
-  return value;
-}
-
-export function useRoute(): Route {
-  const value = useContext(RouteContext);
-  if (!value) {
-    throw new Error('useRoute must be used inside RootNavigator');
-  }
-  return value;
-}
 
 export function RootNavigator() {
   const [stack, setStack] = useState<Route[]>([{name: 'Home', params: undefined}]);
@@ -67,7 +42,9 @@ export function RootNavigator() {
   return (
     <NavigationContext.Provider value={navigation}>
       <RouteContext.Provider value={current}>
-        {current.name === 'Home' ? <HomeScreen /> : <BooksScreen />}
+        <View style={{flex: 1, backgroundColor: colors.secondaryBackground}}>
+          {current.name === 'Home' ? <HomeScreen /> : <BooksScreen />}
+        </View>
       </RouteContext.Provider>
     </NavigationContext.Provider>
   );

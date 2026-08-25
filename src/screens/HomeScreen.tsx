@@ -3,7 +3,7 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {GenreCard} from '../components/GenreCard';
 import {genres} from '../constants/genres';
 import {t} from '../i18n';
-import {useNavigation} from '../navigation/RootNavigator';
+import {useNavigation} from '../navigation/context';
 import {colors, typography} from '../theme';
 
 export function HomeScreen() {
@@ -21,6 +21,7 @@ export function HomeScreen() {
         {
           paddingTop: insets.top + 16,
           paddingBottom: insets.bottom + 32,
+          flexGrow: 1,
         },
       ]}>
       <Text style={[styles.title, {fontSize: titleSize, lineHeight: titleSize + 4}]}>
