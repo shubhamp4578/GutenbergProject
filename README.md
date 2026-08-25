@@ -79,14 +79,10 @@ Cursor (Grok) helped scaffold screens, the API client, launcher icons, and Git c
 
 ## Demo video
 
-Please add Drive / YouTube / unlisted links after recording (portrait and landscape):
+Demo recording (portrait and landscape in one video):
 
-- Portrait: _paste URL here_
-- Landscape: _paste URL here_
+- [IgniteSol demo video (Drive)](https://drive.google.com/file/d/1FCK5GapKGftccB2Z4TopPOBYzpBd7Czd/view?usp=drive_link)
 
-Suggested recording flow (2–3 minutes total):
+## Release APK
 
-1. Home: show genres, rotate to landscape, back to portrait
-2. Open Fiction → scroll (pagination) → search e.g. `Dickens` → clear search
-3. Tap a book → browser opens HTML/PDF/TXT
-4. Airplane mode or bad network briefly → show error + Retry (optional)
+- [GutenbergProject.apk (Drive)](https://drive.google.com/file/d/1j1yfbZR6Atw9QhLGGWOzI5N5ITHcxP7Z/view?usp=sharing)
