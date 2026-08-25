@@ -18,7 +18,7 @@ export function GenreCard({icon, label, onPress}: GenreCardProps) {
         <Text style={styles.icon}>{icon}</Text>
         <Text style={styles.label}>{label.toUpperCase()}</Text>
       </View>
-      <Text style={styles.arrow}>›</Text>
+      <View style={styles.chevron} />
     </Pressable>
   );
 }
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    flexShrink: 1,
   },
   icon: {
     fontSize: 22,
@@ -52,11 +53,15 @@ const styles = StyleSheet.create({
   label: {
     ...typography.genreCard,
     letterSpacing: 0.5,
+    includeFontPadding: false,
   },
-  arrow: {
-    fontSize: 28,
-    color: colors.primary,
-    fontWeight: '300',
-    marginTop: -2,
+  chevron: {
+    width: 10,
+    height: 10,
+    borderRightWidth: 2.5,
+    borderTopWidth: 2.5,
+    borderColor: colors.primary,
+    transform: [{rotate: '45deg'}],
+    marginRight: 4,
   },
 });

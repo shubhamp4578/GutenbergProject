@@ -23,6 +23,8 @@ export function SearchBox({value, onChangeText}: SearchBoxProps) {
         autoCorrect={false}
         autoCapitalize="none"
         returnKeyType="search"
+        disableFullscreenUI={true}
+        underlineColorAndroid="transparent"
         accessibilityLabel={t.searchPlaceholder}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
@@ -32,7 +34,8 @@ export function SearchBox({value, onChangeText}: SearchBoxProps) {
           accessibilityRole="button"
           accessibilityLabel="Clear search"
           onPress={() => onChangeText('')}
-          hitSlop={8}>
+          hitSlop={8}
+          style={styles.clearHit}>
           <Text style={styles.clear}>×</Text>
         </Pressable>
       ) : null}
@@ -48,7 +51,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: 'transparent',
   },
   focused: {
@@ -56,19 +59,25 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   icon: {
-    fontSize: 18,
+    fontSize: 16,
     color: colors.grey,
     marginRight: 8,
   },
   input: {
     ...typography.searchBox,
     flex: 1,
-    padding: 0,
+    paddingVertical: 0,
+    paddingHorizontal: 0,
     color: colors.greyDark,
+    includeFontPadding: false,
+  },
+  clearHit: {
+    minWidth: 28,
+    alignItems: 'center',
   },
   clear: {
     fontSize: 22,
+    lineHeight: 24,
     color: colors.grey,
-    paddingHorizontal: 4,
   },
 });

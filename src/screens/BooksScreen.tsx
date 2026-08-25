@@ -3,8 +3,9 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  KeyboardAvoidingView,
   Linking,
-  Pressable,
+  Platform,
   StyleSheet,
   Text,
   useWindowDimensions,
@@ -12,6 +13,7 @@ import {
 } from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import type {Book} from '../api/types';
+import {BackButton} from '../components/BackButton';
 import {BookCard} from '../components/BookCard';
 import {FeedbackState} from '../components/FeedbackState';
 import {SearchBox} from '../components/SearchBox';
@@ -21,14 +23,15 @@ import {useNavigation, useRoute} from '../navigation/context';
 import {colors, typography} from '../theme';
 import {pickViewableBookUrl} from '../utils/bookFormats';
 
-function columnCount(width: number): number {
+function columnCount(width: number, height: number): number {
+  const landscape = width > height;
   if (width >= 1100) {
     return 6;
   }
   if (width >= 900) {
     return 5;
   }
-  if (width >= 700) {
+  if (width >= 700 || landscape) {
     return 4;
   }
   return 3;
@@ -38,11 +41,12 @@ export function BooksScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const {width} = useWindowDimensions();
+  const {width, height} = useWindowDimensions();
   const [search, setSearch] = useState('');
   const topic = route.name === 'Books' ? route.params.topic : '';
   const genreLabel = route.name === 'Books' ? route.params.genreLabel : '';
-  const columns = columnCount(width);
+  const columns = columnCount(width, height);
+  const landscape = width > height;
 
   const {
     books,
@@ -85,23 +89,34 @@ export function BooksScreen() {
     } catch {
       Alert.alert(t.noViewableVersion);
     }
-    await Linking.openURL(url);
   }
 
   return (
-    <View style={[styles.screen, {paddingTop: insets.top}]}>
-      <View style={styles.header}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
-          onPress={navigation.goBack}
-          hitSlop={12}
-          style={styles.back}>
-          <Text style={styles.backArrow}>←</Text>
-          <Text style={styles.headerTitle}>{genreLabel}</Text>
-        </Pressable>
+    <KeyboardAvoidingView
+      style={styles.screen}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={0}>
+      <View
+        style={[
+          styles.header,
+          {
+            paddingTop: insets.top + (landscape ? 4 : 12),
+            paddingBottom: landscape ? 8 : 12,
+            paddingHorizontal: landscape ? 20 : 16,
+            gap: landscape ? 8 : 12,
+          },
+        ]}>
+        <View style={styles.titleRow}>
+          <BackButton onPress={navigation.goBack} />
+          <Text
+            style={[styles.headerTitle, landscape && styles.headerTitleLandscape]}
+            numberOfLines={1}>
+            {genreLabel}
+          </Text>
+        </View>
         <SearchBox value={search} onChangeText={setSearch} />
       </View>
+
       {loading && books.length === 0 ? (
         <FeedbackState loading message={t.loadingBooks} />
       ) : error && books.length === 0 ? (
@@ -114,6 +129,8 @@ export function BooksScreen() {
           key={columns}
           numColumns={columns}
           keyExtractor={item => String(item.id)}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="on-drag"
           renderItem={({item}) =>
             item.id < 0 ? (
               <View style={[styles.cell, {flex: 1 / columns}]} />
@@ -124,8 +141,9 @@ export function BooksScreen() {
             )
           }
           contentContainerStyle={{
-            paddingHorizontal: 12,
+            paddingHorizontal: landscape ? 18 : 12,
             paddingBottom: insets.bottom + 24,
+            paddingTop: 4,
           }}
           onEndReached={loadMore}
           onEndReachedThreshold={0.4}
@@ -141,7 +159,7 @@ export function BooksScreen() {
           }
         />
       )}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -151,21 +169,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.white,
   },
   header: {
-    paddingHorizontal: 16,
     paddingBottom: 12,
     gap: 12,
+    backgroundColor: colors.white,
   },
-  back: {
+  titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-  },
-  backArrow: {
-    ...typography.heading2,
-    color: colors.primary,
+    gap: 4,
+    minHeight: 36,
   },
   headerTitle: {
     ...typography.heading2,
+    flexShrink: 1,
+    includeFontPadding: false,
+  },
+  headerTitleLandscape: {
+    fontSize: 24,
   },
   cell: {
     padding: 6,
