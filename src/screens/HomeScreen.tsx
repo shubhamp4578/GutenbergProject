@@ -11,6 +11,7 @@ export function HomeScreen() {
   const navigation = useNavigation();
   const {width} = useWindowDimensions();
   const isWide = width >= 700;
+  const titleSize = width < 360 ? 36 : 48;
 
   return (
     <ScrollView
@@ -22,7 +23,7 @@ export function HomeScreen() {
           paddingBottom: insets.bottom + 32,
         },
       ]}>
-      <Text style={styles.title}>{t.appName}</Text>
+      <Text style={[styles.title, {fontSize: titleSize, lineHeight: titleSize + 4}]}>
       <Text style={styles.subtitle}>{t.appDescription}</Text>
       <View style={[styles.list, isWide && styles.listWide]}>
         {genres.map(genre => (
